@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Interactive infographic for pizza survey data visualization">
+  <meta name="theme-color" content="#C0392B">
+
+  <title>Pizza Survey Infographic</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="./css/main.css">
+
+  <!-- Preconnect to Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body>
+  <!-- Upload Section -->
+  <section id="upload-section" class="upload-section" aria-label="Upload Survey Data">
+    <div class="upload-header">
+      <h1>🍕 Pizza Survey Infographic</h1>
+      <p>Transform your pizza survey data into a stunning, shareable visualization</p>
+    </div>
+
+    <div id="drop-zone" class="upload-zone" role="button" tabindex="0" aria-label="Click or drag to upload CSV file">
+      <div class="upload-icon">📊</div>
+      <h3>Drop your CSV file here</h3>
+      <p>or click to browse</p>
+      <p style="margin-top: var(--space-md); font-size: var(--text-xs); color: var(--text-light);">
+        Supports Google Forms CSV exports
+      </p>
+    </div>
+
+    <input type="file" id="file-input" class="upload-input" accept=".csv" aria-hidden="true">
+
+    <button id="sample-data-btn" class="sample-data-btn">
+      ✨ Try with Sample Data
+    </button>
+
+    <p style="margin-top: var(--space-lg); color: var(--text-light); font-size: var(--text-sm);">
+      Press <kbd style="background: var(--bg-card); padding: 2px 6px; border-radius: 4px;">Ctrl</kbd> + <kbd style="background: var(--bg-card); padding: 2px 6px; border-radius: 4px;">Enter</kbd> for quick demo
+    </p>
+  </section>
+
+  <!-- Infographic Section (hidden by default) -->
+  <main id="infographic" class="infographic" aria-label="Pizza Survey Results">
+    <!-- Content will be dynamically generated -->
+  </main>
+
+  <!-- Reset Button (shown when viewing infographic) -->
+  <button
+    id="reset-btn"
+    onclick="resetToUpload()"
+    style="
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      background: var(--pizza-red);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-family: var(--font-primary);
+      font-weight: var(--font-semibold);
+      box-shadow: var(--shadow-lg);
+      z-index: 100;
+      display: none;
+    "
+    aria-label="Upload new data"
+  >
+    📤 New Data
+  </button>
+
+  <!-- Scripts -->
+  <script type="module" src="./js/main.js"></script>
+
+  <!-- Show reset button when infographic is visible -->
+  <script>
+    const observer = new MutationObserver((mutations) => {
+      const infographic = document.getElementById('infographic');
+      const resetBtn = document.getElementById('reset-btn');
+      if (infographic && resetBtn) {
+        resetBtn.style.display = infographic.classList.contains('visible') ? 'block' : 'none';
+      }
+    });
+
+    observer.observe(document.getElementById('infographic'), {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+  </script>
+
+  <!-- Accessibility: Skip to main content link -->
+  <a href="#infographic" class="sr-only" style="
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  ">Skip to results</a>
+</body>
+</html>

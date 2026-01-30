@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pizza Survey Infographic</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍕</text></svg>">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- External Libraries (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3-cloud@1.2.7/build/d3.layout.cloud.min.js"></script>
+
+  <style>
+    /* CSS Variables */
+    :root {
+      --pizza-red: #C0392B;
+      --pizza-red-light: #E74C3C;
+      --pizza-red-dark: #922B21;
+      --cheese-yellow: #F4D03F;
+      --cheese-yellow-light: #F7DC6F;
+      --cheese-yellow-dark: #D4AC0D;
+      --pesto-green: #27AE60;
+      --pesto-green-light: #2ECC71;
+      --pesto-green-dark: #1E8449;
+      --bg-cream: #FDF6E3;
+      --bg-warm: #FAF0DC;
+      --bg-card: #FFFFFF;
+      --text-primary: #2C3E50;
+      --text-secondary: #7F8C8D;
+      --text-light: #BDC3C7;
+      --text-inverse: #FFFFFF;
+      --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
+      --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --radius-round: 50%;
+      --space-xs: 4px;
+      --space-sm: 8px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+      --space-2xl: 48px;
+      --space-3xl: 64px;
+      --font-primary: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Fredoka One', 'Nunito', sans-serif;
+      --transition-fast: 150ms ease;
+      --transition-normal: 300ms ease;
+      --transition-slow: 500ms ease;
+    }
+
+    /* Reset */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-primary);
+      background-color: var(--bg-cream);
+      color: var(--text-primary);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    h1, h2, h3 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      line-height: 1.1;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 var(--space-lg);
+    }
+
+    /* Upload Section */
+    .upload-section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-2xl);
+      text-align: center;
+    }
+
+    .upload-header h1 {
+      color: var(--pizza-red);
+      font-size: 2.5rem;
+      margin-bottom: var(--space-md);
+    }
+
+    .upload-header p {
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      max-width: 500px;
+      margin-bottom: var(--space-2xl);
+    }
+
+    .upload-zone {
+      width: 100%;
+      max-width: 500px;
+      padding: var(--space-3xl);
+      border: 3px dashed var(--cheese-yellow);
+      border-radius: var(--radius-xl);
+      background: var(--bg-card);
+      cursor: pointer;
+      transition: all var(--transition-normal);
+    }
+
+    .upload-zone:hover, .upload-zone.drag-over {
+      border-color: var(--pizza-red);
+      background: var(--bg-warm);
+      transform: scale(1.02);
+    }
+
+    .upload-icon { font-size: 4rem; margin-bottom: var(--space-md); }
+    .upload-zone h3 { margin-bottom: var(--space-sm); }
+    .upload-zone p { color: var(--text-secondary); font-size: 0.875rem; }
+    .upload-input { display: none; }
+
+    .sample-data-btn {
+      margin-top: var(--space-xl);
+      padding: var(--space-md) var(--space-xl);
+      background: var(--pesto-green);
+      color: var(--text-inverse);
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: var(--font-primary);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+    }
+
+    .sample-data-btn:hover {
+      background: var(--pesto-green-dark);
+      transform: translateY(-2px);
+    }
+
+    /* Infographic */
+    .infographic {
+      display: none;
+      padding: var(--space-2xl) 0;
+    }
+
+    .infographic.visible { display: block; }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      box-shadow: var(--shadow-md);
+      margin-bottom: var(--space-xl);
+    }
+
+    .section-title {
+      text-align: center;
+      margin-bottom: var(--space-xl);
+      color: var(--pizza-red);
+      font-size: 1.75rem;
+    }
+
+    /* Hero Rating */
+    .hero-section {
+      text-align: center;
+      padding: var(--space-3xl) 0;
+    }
+
+    .hero-title {
+      font-size: 2rem;
+      color: var(--pizza-red);
+      margin-bottom: var(--space-lg);
+    }
+
+    .rating-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2xl);
+      flex-wrap: wrap;
+    }
+
+    .rating-value {
+      font-family: var(--font-display);
+      font-size: 5rem;
+      color: var(--pizza-red);
+      line-height: 1;
+    }
+
+    .rating-max {
+      font-size: 1.5rem;
+      color: var(--text-secondary);
+    }
+
+    .pizza-gauge {
+      width: 200px;
+      height: 200px;
+      position: relative;
+    }
+
+    .pizza-gauge svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .pizza-gauge-bg {
+      fill: none;
+      stroke: var(--bg-warm);
+      stroke-width: 20;
+    }
+
+    .pizza-gauge-fill {
+      fill: none;
+      stroke: var(--cheese-yellow);
+      stroke-width: 20;
+      stroke-linecap: round;
+      stroke-dasharray: 565.48;
+      stroke-dashoffset: 565.48;
+      transition: stroke-dashoffset 1.5s ease-out;
+    }
+
+    .pizza-gauge-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 3rem;
+    }
+
+    /* Chart Container */
+    .chart-container {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .popularity-legend {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: var(--space-md);
+      margin-top: var(--space-lg);
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm) var(--space-md);
+      background: var(--bg-warm);
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+    }
+
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* Emoji Cards */
+    .emoji-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: var(--space-lg);
+    }
+
+    .emoji-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      transition: transform var(--transition-normal);
+    }
+
+    .emoji-card:hover { transform: translateY(-4px) scale(1.02); }
+    .emoji-icon { font-size: 3.5rem; margin-bottom: var(--space-md); display: block; }
+    .emoji-label { font-weight: 600; margin-bottom: var(--space-sm); }
+
+    .emoji-bar {
+      height: 8px;
+      background: var(--bg-warm);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: var(--space-sm);
+    }
+
+    .emoji-bar-fill {
+      height: 100%;
+      border-radius: var(--radius-md);
+      transition: width 1s ease-out;
+    }
+
+    .emoji-percentage {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    /* Order Again */
+    .order-again-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-xl);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .order-card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      text-align: center;
+      box-shadow: var(--shadow-md);
+      border: 3px solid transparent;
+      transition: all var(--transition-normal);
+    }
+
+    .order-card.yes { border-color: var(--pesto-green); }
+    .order-card.meh { border-color: var(--cheese-yellow); }
+    .order-card:hover { transform: scale(1.05); }
+    .order-icon { font-size: 3.5rem; margin-bottom: var(--space-md); }
+    .order-label { font-size: 1.25rem; font-weight: 700; margin-bottom: var(--space-sm); }
+    .order-count { font-size: 2rem; font-weight: 800; }
+    .order-card.yes .order-count { color: var(--pesto-green); }
+    .order-card.meh .order-count { color: var(--cheese-yellow-dark); }
+
+    /* Tier Rankings */
+    .podium {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: var(--space-lg);
+      max-width: 500px;
+      margin: 0 auto;
+      padding-top: var(--space-xl);
+    }
+
+    .podium-item { flex: 1; text-align: center; }
+    .podium-icon { font-size: 2.5rem; margin-bottom: var(--space-sm); }
+    .podium-label { font-weight: 700; margin-bottom: var(--space-sm); font-size: 0.875rem; }
+
+    .podium-bar {
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-inverse);
+      font-size: 1.5rem;
+      font-weight: 800;
+      min-height: 60px;
+    }
+
+    .podium-item.gold .podium-bar {
+      background: linear-gradient(135deg, #FFD700, #FFA500);
+      height: 140px;
+    }
+
+    .podium-item.silver .podium-bar {
+      background: linear-gradient(135deg, #C0C0C0, #A0A0A0);
+      height: 100px;
+    }
+
+    .podium-item.bronze .podium-bar {
+      background: linear-gradient(135deg, #CD7F32, #8B4513);
+      height: 70px;
+    }
+
+    /* Word Cloud */
+    .wordcloud-container {
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #wordcloud { width: 100%; height: 400px; }
+    #wordcloud text { cursor: pointer; transition: opacity 0.15s ease; }
+    #wordcloud text:hover { opacity: 0.7; }
+
+    .wordcloud-tooltip {
+      position: fixed;
+      background: var(--text-primary);
+      color: var(--text-inverse);
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      z-index: 1000;
+    }
+
+    .wordcloud-tooltip.visible { opacity: 1; }
+
+    /* Cold Pizza */
+    .cold-pizza-bars {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .cold-bar-item {
+      display: grid;
+      grid-template-columns: 180px 1fr 60px;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .cold-bar-info {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .cold-emoji { font-size: 1.5rem; }
+    .cold-bar-label { font-weight: 600; }
+
+    .cold-bar {
+      height: 36px;
+      background: var(--bg-warm);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .cold-bar-fill {
+      height: 100%;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: var(--space-md);
+      color: var(--text-inverse);
+      font-weight: 700;
+      font-size: 0.875rem;
+      transition: width 1s ease-out;
+    }
+
+    .cold-bar-fill.hot { background: linear-gradient(90deg, var(--pesto-green), var(--pesto-green-light)); }
+    .cold-bar-fill.warm { background: linear-gradient(90deg, var(--cheese-yellow-dark), var(--cheese-yellow)); }
+    .cold-bar-fill.cold { background: linear-gradient(90deg, var(--pizza-red-dark), var(--pizza-red)); }
+
+    .cold-percentage { font-weight: 700; color: var(--text-secondary); text-align: right; }
+
+    /* Comments Carousel */
+    .carousel-container {
+      position: relative;
+      overflow: hidden;
+      min-height: 180px;
+    }
+
+    .carousel-track {
+      display: flex;
+      transition: transform 0.5s ease;
+    }
+
+    .comment-card {
+      flex: 0 0 100%;
+      padding: var(--space-xl);
+      text-align: center;
+    }
+
+    .comment-quote {
+      font-size: 1.25rem;
+      font-style: italic;
+      color: var(--text-primary);
+      line-height: 1.75;
+      max-width: 600px;
+      margin: 0 auto var(--space-lg);
+    }
+
+    .comment-quote::before, .comment-quote::after {
+      color: var(--cheese-yellow);
+      font-family: var(--font-display);
+      font-size: 2rem;
+    }
+
+    .comment-quote::before { content: '"'; margin-right: 4px; }
+    .comment-quote::after { content: '"'; margin-left: 4px; }
+    .comment-author { font-size: 0.875rem; color: var(--text-secondary); }
+
+    .carousel-controls {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-md);
+      margin-top: var(--space-md);
+    }
+
+    .carousel-btn {
+      width: 44px;
+      height: 44px;
+      border: none;
+      background: var(--pizza-red);
+      color: var(--text-inverse);
+      border-radius: var(--radius-round);
+      cursor: pointer;
+      font-size: 1.25rem;
+      font-weight: 700;
+      transition: all var(--transition-normal);
+    }
+
+    .carousel-btn:hover {
+      background: var(--pizza-red-dark);
+      transform: scale(1.1);
+    }
+
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-sm);
+      margin-top: var(--space-md);
+    }
+
+    .carousel-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: var(--radius-round);
+      background: var(--bg-warm);
+      border: none;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+    }
+
+    .carousel-dot.active {
+      background: var(--pizza-red);
+      transform: scale(1.2);
+    }
+
+    /* Footer */
+    .stats-footer {
+      background: var(--pizza-red);
+      color: var(--text-inverse);
+      padding: var(--space-2xl);
+      border-radius: var(--radius-xl);
+      text-align: center;
+      margin-top: var(--space-2xl);
+    }
+
+    .stats-grid {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-3xl);
+      flex-wrap: wrap;
+    }
+
+    .stat-value {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      margin-bottom: var(--space-xs);
+    }
+
+    .stat-label { font-size: 0.875rem; opacity: 0.9; }
+    .footer-note { margin-top: var(--space-xl); font-size: 0.875rem; opacity: 0.8; }
+
+    /* Reset Button */
+    .reset-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 12px 20px;
+      background: var(--pizza-red);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-family: var(--font-primary);
+      font-weight: 600;
+      box-shadow: var(--shadow-lg);
+      z-index: 100;
+      display: none;
+    }
+
+    .reset-btn:hover { background: var(--pizza-red-dark); }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .upload-header h1 { font-size: 1.75rem; }
+      .rating-value { font-size: 3.5rem; }
+      .rating-display { flex-direction: column; }
+      .order-again-grid { grid-template-columns: 1fr; }
+      .podium { flex-direction: column; align-items: center; }
+      .podium-item { width: 100%; max-width: 200px; }
+      .podium-item.gold .podium-bar,
+      .podium-item.silver .podium-bar,
+      .podium-item.bronze .podium-bar { height: 80px; }
+      .cold-bar-item {
+        grid-template-columns: 1fr;
+        gap: var(--space-sm);
+      }
+      .cold-bar-info { justify-content: center; }
+      .cold-percentage { text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Upload Section -->
+  <section id="upload-section" class="upload-section">
+    <div class="upload-header">
+      <h1>🍕 Pizza Survey Infographic</h1>
+      <p>Transform your pizza survey data into a stunning visualization</p>
+    </div>
+
+    <div id="drop-zone" class="upload-zone">
+      <div class="upload-icon">📊</div>
+      <h3>Drop your CSV file here</h3>
+      <p>or click to browse</p>
+    </div>
+
+    <input type="file" id="file-input" class="upload-input" accept=".csv">
+
+    <button id="sample-data-btn" class="sample-data-btn">
+      ✨ Try with Sample Data
+    </button>
+  </section>
+
+  <!-- Infographic Section -->
+  <main id="infographic" class="infographic">
+    <div class="container" id="infographic-content"></div>
+  </main>
+
+  <!-- Reset Button -->
+  <button id="reset-btn" class="reset-btn">📤 New Data</button>
+
+  <!-- Tooltip for word cloud -->
+  <div class="wordcloud-tooltip" id="wordcloud-tooltip"></div>
+
+  <script>
+    // ============================================
+    // PIZZA SURVEY INFOGRAPHIC - STANDALONE VERSION
+    // ============================================
+
+    // Pizza color mapping
+    const PIZZA_COLORS = {
+      'Cheese': '#F4D03F',
+      'Pepperoni': '#C0392B',
+      'Chicken Pesto': '#27AE60',
+      'Veggie Supreme': '#8E44AD',
+      'Meat Lovers': '#A04000',
+      'Hawaiian': '#F39C12'
+    };
+
+    // Emoji mapping for feelings
+    const EMOJI_MAP = {
+      'joy': { emoji: '😊', color: '#F1C40F' },
+      'satisfied': { emoji: '😌', color: '#2ECC71' },
+      'shame': { emoji: '😅', color: '#9B59B6' },
+      'regret': { emoji: '😩', color: '#E74C3C' }
+    };
+
+    // ============================================
+    // DATA PROCESSING
+    // ============================================
+
+    function processData(rawData) {
+      return {
+        summary: processSummary(rawData),
+        rating: processRating(rawData),
+        pizzaPopularity: processPizzaPopularity(rawData),
+        feelings: processFeelings(rawData),
+        orderAgain: processOrderAgain(rawData),
+        tiers: processTiers(rawData),
+        wordCloud: processWordCloud(rawData),
+        coldPizza: processColdPizza(rawData),
+        comments: processComments(rawData)
+      };
+    }
+
+    function getValue(row, keywords) {
+      const keys = Object.keys(row);
+      for (const key of keys) {
+        const lower = key.toLowerCase();
+        for (const kw of keywords) {
+          if (lower.includes(kw.toLowerCase())) return row[key];
+        }
+      }
+      return '';
+    }
+
+    function processSummary(data) {
+      return {
+        totalResponses: data.length,
+        dateRange: 'January 2025'
+      };
+    }
+
+    function processRating(data) {
+      const ratings = data
+        .map(row => parseFloat(getValue(row, ['rate', 'rating', 'score'])))
+        .filter(r => !isNaN(r) && r >= 1 && r <= 10);
+
+      const average = ratings.length > 0
+        ? ratings.reduce((a, b) => a + b, 0) / ratings.length
+        : 0;
+
+      return { average: Math.round(average * 10) / 10, count: ratings.length };
+    }
+
+    function processPizzaPopularity(data) {
+      const counts = {};
+      data.forEach(row => {
+        const value = getValue(row, ['pizza', 'which']);
+        if (!value) return;
+        value.split(/[,;]/).map(p => p.trim()).filter(p => p).forEach(pizza => {
+          const normalized = normalizePizzaName(pizza);
+          counts[normalized] = (counts[normalized] || 0) + 1;
+        });
+      });
+
+      const items = Object.entries(counts)
+        .sort((a, b) => b[1] - a[1])
+        .map(([name, count]) => ({ name, count }));
+
+      return { items, total: items.reduce((sum, i) => sum + i.count, 0) };
+    }
+
+    function normalizePizzaName(name) {
+      const lower = name.toLowerCase().trim();
+      const mappings = {
+        'cheese': 'Cheese', 'pepperoni': 'Pepperoni', 'pep': 'Pepperoni',
+        'chicken pesto': 'Chicken Pesto', 'pesto chicken': 'Chicken Pesto',
+        'veggie': 'Veggie Supreme', 'veggie supreme': 'Veggie Supreme',
+        'meat lovers': 'Meat Lovers', 'meat lover': 'Meat Lovers',
+        'hawaiian': 'Hawaiian'
+      };
+      return mappings[lower] || name.charAt(0).toUpperCase() + name.slice(1);
+    }
+
+    function processFeelings(data) {
+      const counts = {};
+      data.forEach(row => {
+        const value = getValue(row, ['feel', 'feeling']);
+        if (!value) return;
+        const normalized = value.toLowerCase().trim();
+        counts[normalized] = (counts[normalized] || 0) + 1;
+      });
+
+      const total = Object.values(counts).reduce((a, b) => a + b, 0);
+      const items = Object.entries(counts).map(([feeling, count]) => {
+        const info = EMOJI_MAP[feeling] || { emoji: '🍕', color: '#F4D03F' };
+        return {
+          feeling: feeling.charAt(0).toUpperCase() + feeling.slice(1),
+          count,
+          percentage: Math.round((count / total) * 100),
+          emoji: info.emoji,
+          color: info.color
+        };
+      }).sort((a, b) => b.count - a.count);
+
+      return { items, total };
+    }
+
+    function processOrderAgain(data) {
+      let yes = 0, meh = 0;
+      data.forEach(row => {
+        const value = getValue(row, ['order', 'again']);
+        if (!value) return;
+        const lower = value.toLowerCase();
+        if (lower.includes('yes') || lower.includes('absolutely')) yes++;
+        else if (lower.includes('meh') || lower.includes('maybe')) meh++;
+      });
+      const total = yes + meh;
+      return {
+        yes: { count: yes, percentage: total > 0 ? Math.round((yes / total) * 100) : 0 },
+        meh: { count: meh, percentage: total > 0 ? Math.round((meh / total) * 100) : 0 },
+        total
+      };
+    }
+
+    function processTiers(data) {
+      const tiers = {
+        'Top Tier': { count: 0, icon: '🏆', color: '#FFD700' },
+        'Solid Choice': { count: 0, icon: '🥈', color: '#C0C0C0' },
+        'Mid': { count: 0, icon: '🥉', color: '#CD7F32' }
+      };
+
+      data.forEach(row => {
+        const value = getValue(row, ['tier', 'ranking']);
+        if (!value) return;
+        const lower = value.toLowerCase();
+        if (lower.includes('top')) tiers['Top Tier'].count++;
+        else if (lower.includes('solid')) tiers['Solid Choice'].count++;
+        else if (lower.includes('mid')) tiers['Mid'].count++;
+      });
+
+      const total = Object.values(tiers).reduce((sum, t) => sum + t.count, 0);
+      return {
+        items: Object.entries(tiers).map(([name, data]) => ({
+          name, count: data.count,
+          percentage: total > 0 ? Math.round((data.count / total) * 100) : 0,
+          icon: data.icon, color: data.color
+        })),
+        total
+      };
+    }
+
+    function processWordCloud(data) {
+      const words = {};
+      data.forEach(row => {
+        const value = getValue(row, ['one word', 'describe']);
+        if (!value) return;
+        value.split(/[,;/\s]+/).map(w => w.trim().toLowerCase()).filter(w => w.length > 1).forEach(word => {
+          if (!words[word]) words[word] = { text: word, count: 0 };
+          words[word].count++;
+        });
+      });
+      return Object.values(words).sort((a, b) => b.count - a.count).slice(0, 30);
+    }
+
+    function processColdPizza(data) {
+      const prefs = {
+        'Leftovers Please!': { count: 0, color: '#27AE60' },
+        'If Desperate': { count: 0, color: '#F39C12' },
+        'Never!': { count: 0, color: '#C0392B' }
+      };
+
+      data.forEach(row => {
+        const value = getValue(row, ['cold', 'leftover']);
+        if (!value) return;
+        const lower = value.toLowerCase();
+        if (lower.includes('leftover') || lower.includes('please')) prefs['Leftovers Please!'].count++;
+        else if (lower.includes('desperate')) prefs['If Desperate'].count++;
+        else if (lower.includes('never')) prefs['Never!'].count++;
+      });
+
+      const total = Object.values(prefs).reduce((sum, p) => sum + p.count, 0);
+      return {
+        items: Object.entries(prefs).map(([label, data]) => ({
+          label, count: data.count,
+          percentage: total > 0 ? Math.round((data.count / total) * 100) : 0,
+          color: data.color
+        })),
+        total
+      };
+    }
+
+    function processComments(data) {
+      return data
+        .map(row => getValue(row, ['comment', 'feedback', 'additional']))
+        .filter(c => c && c.trim().length > 10)
+        .slice(0, 10);
+    }
+
+    // ============================================
+    // SAMPLE DATA GENERATOR
+    // ============================================
+
+    function generateSampleData() {
+      const pizzaTypes = ['Cheese', 'Pepperoni', 'Chicken Pesto', 'Veggie Supreme', 'Meat Lovers', 'Hawaiian'];
+      const feelings = ['Joy', 'Satisfied', 'Shame', 'Regret'];
+      const orderAgain = ['Yes, absolutely!', 'Meh, maybe'];
+      const tiers = ['Top Tier', 'Solid Choice', 'Mid'];
+      const coldPizza = ['Leftovers Please!', 'If Desperate', 'Never!'];
+      const oneWords = ['pillowy', 'THICK', 'thicc', 'doughy', 'Luxe', 'cheesy', 'perfect', 'heavenly', 'greasy', 'delicious', 'amazing', 'crispy', 'saucy', 'gooey', 'divine'];
+      const comments = [
+        'Best pizza I\'ve ever had!',
+        'The crust was perfectly crispy.',
+        'I dream about this pizza.',
+        'Would recommend to everyone!',
+        'The cheese pull was insane.',
+        'Perfect sauce to cheese ratio.',
+        'This pizza changed my life.',
+        'Been searching for pizza like this.',
+        'Flavors dance on your tongue.',
+        'My new comfort food!'
+      ];
+
+      const data = [];
+      for (let i = 0; i < 47; i++) {
+        const numPizzas = Math.floor(Math.random() * 2) + 1;
+        const selectedPizzas = [];
+        for (let j = 0; j < numPizzas; j++) {
+          const pizza = pizzaTypes[Math.floor(Math.random() * pizzaTypes.length)];
+          if (!selectedPizzas.includes(pizza)) selectedPizzas.push(pizza);
+        }
+
+        data.push({
+          'Timestamp': new Date(2025, 0, Math.floor(Math.random() * 28) + 1).toISOString(),
+          'Rate this pizza (1-10)': Math.floor(Math.random() * 4) + 6,
+          'Which pizza did you try?': selectedPizzas.join(', '),
+          'How do you feel after eating?': feelings[Math.floor(Math.random() * feelings.length)],
+          'Would you order again?': orderAgain[Math.random() > 0.3 ? 0 : 1],
+          'Pizza tier ranking': tiers[Math.floor(Math.random() * tiers.length)],
+          'One word to describe': oneWords[Math.floor(Math.random() * oneWords.length)],
+          'Cold pizza preference': coldPizza[Math.floor(Math.random() * coldPizza.length)],
+          'Additional comments': Math.random() > 0.6 ? comments[Math.floor(Math.random() * comments.length)] : ''
+        });
+      }
+      return data;
+    }
+
+    // ============================================
+    // VISUALIZATION RENDERING
+    // ============================================
+
+    function renderInfographic(data) {
+      const container = document.getElementById('infographic-content');
+
+      container.innerHTML = `
+        <!-- Hero Rating -->
+        <section class="card">
+          <div class="hero-section">
+            <h2 class="hero-title">The Verdict Is In...</h2>
+            <div class="rating-display">
+              <div class="rating-number">
+                <span class="rating-value" id="rating-counter">0</span>
+                <span class="rating-max">/10</span>
+              </div>
+              <div class="pizza-gauge">
+                <svg viewBox="0 0 200 200">
+                  <circle class="pizza-gauge-bg" cx="100" cy="100" r="90"></circle>
+                  <circle class="pizza-gauge-fill" id="gauge-fill" cx="100" cy="100" r="90"></circle>
+                </svg>
+                <div class="pizza-gauge-center">🍕</div>
+              </div>
+            </div>
+            <p style="margin-top: 24px; color: #7F8C8D;">Based on <strong>${data.rating.count}</strong> reviews</p>
+          </div>
+        </section>
+
+        <!-- Pizza Popularity -->
+        <section class="card">
+          <h2 class="section-title">Most Popular Pizzas 🍕</h2>
+          <div class="chart-container">
+            <canvas id="popularity-chart"></canvas>
+          </div>
+          <div class="popularity-legend" id="popularity-legend"></div>
+        </section>
+
+        <!-- Order Again -->
+        <section class="card">
+          <h2 class="section-title">Would You Order Again? 📦</h2>
+          <div class="order-again-grid">
+            <div class="order-card yes">
+              <div class="order-icon">📦✨</div>
+              <div class="order-label">YES!</div>
+              <div class="order-count" id="yes-count">0</div>
+              <div style="font-size: 0.875rem; color: #7F8C8D;">${data.orderAgain.yes.percentage}%</div>
+            </div>
+            <div class="order-card meh">
+              <div class="order-icon">📦😐</div>
+              <div class="order-label">Meh...</div>
+              <div class="order-count" id="meh-count">0</div>
+              <div style="font-size: 0.875rem; color: #7F8C8D;">${data.orderAgain.meh.percentage}%</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Emoji Feelings -->
+        <section class="card">
+          <h2 class="section-title">How Did You Feel After? 😋</h2>
+          <div class="emoji-grid" id="emoji-grid"></div>
+        </section>
+
+        <!-- Tier Rankings -->
+        <section class="card">
+          <h2 class="section-title">Pizza Tier Rankings 🏆</h2>
+          <div class="podium" id="podium"></div>
+        </section>
+
+        <!-- Word Cloud -->
+        <section class="card">
+          <h2 class="section-title">Describe It In One Word 💬</h2>
+          <div class="wordcloud-container">
+            <div id="wordcloud"></div>
+          </div>
+        </section>
+
+        <!-- Cold Pizza -->
+        <section class="card">
+          <h2 class="section-title">Cold Pizza? 🥶🍕</h2>
+          <div class="cold-pizza-bars" id="cold-pizza-bars"></div>
+        </section>
+
+        <!-- Comments -->
+        <section class="card" id="comments-section"></section>
+
+        <!-- Footer -->
+        <footer class="stats-footer">
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-value" id="total-responses">0</div>
+              <div class="stat-label">Total Responses</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">${data.summary.dateRange}</div>
+              <div class="stat-label">Survey Period</div>
+            </div>
+          </div>
+          <p class="footer-note">🍕 Made with love for pizza lovers everywhere</p>
+        </footer>
+      `;
+
+      // Show infographic
+      document.getElementById('upload-section').style.display = 'none';
+      document.getElementById('infographic').classList.add('visible');
+      document.getElementById('reset-btn').style.display = 'block';
+
+      // Render all visualizations
+      setTimeout(() => animateRating(data.rating.average), 100);
+      setTimeout(() => renderPopularityChart(data.pizzaPopularity), 200);
+      setTimeout(() => animateOrderCounts(data.orderAgain), 300);
+      setTimeout(() => renderEmojiCards(data.feelings), 400);
+      setTimeout(() => renderPodium(data.tiers), 500);
+      setTimeout(() => renderWordCloud(data.wordCloud), 600);
+      setTimeout(() => renderColdPizza(data.coldPizza), 700);
+      setTimeout(() => renderComments(data.comments), 800);
+      setTimeout(() => animateTotal(data.summary.totalResponses), 900);
+    }
+
+    function animateRating(average) {
+      const counter = document.getElementById('rating-counter');
+      const gauge = document.getElementById('gauge-fill');
+
+      // Animate counter
+      anime({
+        targets: { value: 0 },
+        value: average,
+        duration: 2000,
+        easing: 'easeOutExpo',
+        update: function(anim) {
+          counter.textContent = anim.animations[0].currentValue.toFixed(1);
+        }
+      });
+
+      // Animate gauge
+      const circumference = 2 * Math.PI * 90;
+      const offset = circumference * (1 - average / 10);
+      gauge.style.strokeDasharray = circumference;
+      anime({
+        targets: gauge,
+        strokeDashoffset: [circumference, offset],
+        duration: 2000,
+        easing: 'easeOutExpo',
+        delay: 300
+      });
+    }
+
+    function renderPopularityChart(popularityData) {
+      const ctx = document.getElementById('popularity-chart');
+      const labels = popularityData.items.map(i => i.name);
+      const data = popularityData.items.map(i => i.count);
+      const colors = popularityData.items.map(i => PIZZA_COLORS[i.name] || '#999');
+
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels,
+          datasets: [{ data, backgroundColor: colors, borderColor: '#fff', borderWidth: 3 }]
+        },
+        options: {
+          responsive: true,
+          cutout: '60%',
+          plugins: { legend: { display: false } },
+          animation: { animateRotate: true, animateScale: true, duration: 1500 }
+        }
+      });
+
+      // Create legend
+      const legend = document.getElementById('popularity-legend');
+      legend.innerHTML = popularityData.items.map(item => `
+        <div class="legend-item">
+          <span class="legend-color" style="background: ${PIZZA_COLORS[item.name] || '#999'}"></span>
+          <span>${item.name}</span>
+          <span style="font-weight: 700; color: #7F8C8D;">${Math.round((item.count / popularityData.total) * 100)}%</span>
+        </div>
+      `).join('');
+    }
+
+    function animateOrderCounts(orderData) {
+      anime({
+        targets: { value: 0 },
+        value: orderData.yes.count,
+        duration: 1500,
+        easing: 'easeOutExpo',
+        update: function(anim) {
+          document.getElementById('yes-count').textContent = Math.round(anim.animations[0].currentValue);
+        }
+      });
+
+      anime({
+        targets: { value: 0 },
+        value: orderData.meh.count,
+        duration: 1500,
+        easing: 'easeOutExpo',
+        delay: 200,
+        update: function(anim) {
+          document.getElementById('meh-count').textContent = Math.round(anim.animations[0].currentValue);
+        }
+      });
+    }
+
+    function renderEmojiCards(feelingsData) {
+      const grid = document.getElementById('emoji-grid');
+      grid.innerHTML = feelingsData.items.map(item => `
+        <div class="emoji-card">
+          <span class="emoji-icon">${item.emoji}</span>
+          <div class="emoji-label">${item.feeling}</div>
+          <div class="emoji-bar">
+            <div class="emoji-bar-fill" style="width: ${item.percentage}%; background: ${item.color}"></div>
+          </div>
+          <div class="emoji-percentage" style="color: ${item.color}">${item.percentage}%</div>
+        </div>
+      `).join('');
+    }
+
+    function renderPodium(tierData) {
+      const podium = document.getElementById('podium');
+      const order = ['Solid Choice', 'Top Tier', 'Mid'];
+      const positions = ['silver', 'gold', 'bronze'];
+
+      podium.innerHTML = order.map((tierName, idx) => {
+        const tier = tierData.items.find(t => t.name === tierName) || { count: 0, icon: '🏅' };
+        return `
+          <div class="podium-item ${positions[idx]}">
+            <div class="podium-icon">${tier.icon}</div>
+            <div class="podium-label">${tierName}</div>
+            <div class="podium-bar">${tier.count}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderWordCloud(wordData) {
+      if (!wordData || wordData.length === 0) return;
+
+      const container = document.getElementById('wordcloud');
+      const width = container.clientWidth || 600;
+      const height = 400;
+
+      const maxCount = Math.max(...wordData.map(w => w.count));
+      const minCount = Math.min(...wordData.map(w => w.count));
+      const fontScale = d3.scaleLinear().domain([minCount, maxCount]).range([14, 60]);
+
+      const colors = ['#C0392B', '#F4D03F', '#27AE60', '#E74C3C', '#F39C12', '#8E44AD', '#2ECC71', '#D35400'];
+      const colorScale = d3.scaleOrdinal(colors);
+
+      const words = wordData.map(w => ({
+        text: w.text,
+        size: fontScale(w.count),
+        count: w.count
+      }));
+
+      const layout = d3.layout.cloud()
+        .size([width, height])
+        .words(words)
+        .padding(5)
+        .rotate(() => Math.random() > 0.7 ? 90 : 0)
+        .font("'Nunito', sans-serif")
+        .fontSize(d => d.size)
+        .on('end', draw);
+
+      layout.start();
+
+      function draw(words) {
+        d3.select('#wordcloud').selectAll('*').remove();
+
+        const svg = d3.select('#wordcloud')
+          .append('svg')
+          .attr('width', width)
+          .attr('height', height)
+          .append('g')
+          .attr('transform', `translate(${width/2}, ${height/2})`);
+
+        const tooltip = document.getElementById('wordcloud-tooltip');
+
+        svg.selectAll('text')
+          .data(words)
+          .enter()
+          .append('text')
+          .style('font-size', d => `${d.size}px`)
+          .style('font-family', "'Nunito', sans-serif")
+          .style('font-weight', d => d.size > 35 ? '800' : '600')
+          .style('fill', (d, i) => colorScale(i))
+          .attr('text-anchor', 'middle')
+          .attr('transform', d => `translate(${d.x}, ${d.y}) rotate(${d.rotate})`)
+          .text(d => d.text)
+          .on('mouseover', function(event, d) {
+            tooltip.innerHTML = `<strong>${d.text}</strong><br>${d.count} mention${d.count > 1 ? 's' : ''}`;
+            tooltip.classList.add('visible');
+          })
+          .on('mousemove', function(event) {
+            tooltip.style.left = `${event.pageX + 15}px`;
+            tooltip.style.top = `${event.pageY - 10}px`;
+          })
+          .on('mouseout', function() {
+            tooltip.classList.remove('visible');
+          });
+      }
+    }
+
+    function renderColdPizza(coldData) {
+      const container = document.getElementById('cold-pizza-bars');
+      const maxCount = Math.max(...coldData.items.map(i => i.count));
+      const emojis = { 'Leftovers Please!': '🤤', 'If Desperate': '🤷', 'Never!': '🙅' };
+      const classes = { 'Leftovers Please!': 'hot', 'If Desperate': 'warm', 'Never!': 'cold' };
+
+      container.innerHTML = coldData.items.map(item => {
+        const width = maxCount > 0 ? (item.count / maxCount) * 100 : 0;
+        return `
+          <div class="cold-bar-item">
+            <div class="cold-bar-info">
+              <span class="cold-emoji">${emojis[item.label] || '🍕'}</span>
+              <span class="cold-bar-label">${item.label}</span>
+            </div>
+            <div class="cold-bar">
+              <div class="cold-bar-fill ${classes[item.label] || ''}" style="width: ${width}%">
+                ${item.count}
+              </div>
+            </div>
+            <div class="cold-percentage">${item.percentage}%</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    let carouselIndex = 0;
+    let carouselInterval = null;
+
+    function renderComments(comments) {
+      const section = document.getElementById('comments-section');
+      if (!comments || comments.length === 0) {
+        section.innerHTML = '<h2 class="section-title">What People Are Saying 💬</h2><p style="text-align: center; color: #7F8C8D;">No comments available</p>';
+        return;
+      }
+
+      section.innerHTML = `
+        <h2 class="section-title">What People Are Saying 💬</h2>
+        <div class="carousel-container">
+          <div class="carousel-track" id="carousel-track">
+            ${comments.map((c, i) => `
+              <div class="comment-card" style="opacity: ${i === 0 ? 1 : 0}">
+                <div class="comment-quote">${escapeHtml(c)}</div>
+                <div class="comment-author">— Anonymous Pizza Lover</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="carousel-btn" id="prev-btn">‹</button>
+          <button class="carousel-btn" id="next-btn">›</button>
+        </div>
+        <div class="carousel-dots" id="carousel-dots">
+          ${comments.map((_, i) => `<button class="carousel-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></button>`).join('')}
+        </div>
+      `;
+
+      const track = document.getElementById('carousel-track');
+      const dots = document.querySelectorAll('.carousel-dot');
+      const cards = document.querySelectorAll('.comment-card');
+
+      function goToSlide(index) {
+        carouselIndex = index;
+        track.style.transform = `translateX(-${index * 100}%)`;
+        cards.forEach((card, i) => card.style.opacity = i === index ? 1 : 0);
+        dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+      }
+
+      document.getElementById('prev-btn').addEventListener('click', () => {
+        goToSlide((carouselIndex - 1 + comments.length) % comments.length);
+      });
+
+      document.getElementById('next-btn').addEventListener('click', () => {
+        goToSlide((carouselIndex + 1) % comments.length);
+      });
+
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => goToSlide(parseInt(dot.dataset.index)));
+      });
+
+      carouselInterval = setInterval(() => {
+        goToSlide((carouselIndex + 1) % comments.length);
+      }, 5000);
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function animateTotal(total) {
+      anime({
+        targets: { value: 0 },
+        value: total,
+        duration: 1500,
+        easing: 'easeOutExpo',
+        update: function(anim) {
+          document.getElementById('total-responses').textContent = Math.round(anim.animations[0].currentValue);
+        }
+      });
+    }
+
+    // ============================================
+    // FILE UPLOAD & INITIALIZATION
+    // ============================================
+
+    function init() {
+      const dropZone = document.getElementById('drop-zone');
+      const fileInput = document.getElementById('file-input');
+      const sampleBtn = document.getElementById('sample-data-btn');
+      const resetBtn = document.getElementById('reset-btn');
+
+      // Drag and drop
+      ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
+        dropZone.addEventListener(evt, e => { e.preventDefault(); e.stopPropagation(); });
+      });
+
+      ['dragenter', 'dragover'].forEach(evt => {
+        dropZone.addEventListener(evt, () => dropZone.classList.add('drag-over'));
+      });
+
+      ['dragleave', 'drop'].forEach(evt => {
+        dropZone.addEventListener(evt, () => dropZone.classList.remove('drag-over'));
+      });
+
+      dropZone.addEventListener('drop', e => {
+        const file = e.dataTransfer.files[0];
+        if (file && (file.type === 'text/csv' || file.name.endsWith('.csv'))) {
+          parseFile(file);
+        } else {
+          alert('Please upload a CSV file.');
+        }
+      });
+
+      dropZone.addEventListener('click', () => fileInput.click());
+
+      fileInput.addEventListener('change', e => {
+        if (e.target.files[0]) parseFile(e.target.files[0]);
+      });
+
+      sampleBtn.addEventListener('click', () => {
+        const data = generateSampleData();
+        const processed = processData(data);
+        renderInfographic(processed);
+      });
+
+      resetBtn.addEventListener('click', () => {
+        if (carouselInterval) clearInterval(carouselInterval);
+        document.getElementById('upload-section').style.display = 'flex';
+        document.getElementById('infographic').classList.remove('visible');
+        resetBtn.style.display = 'none';
+      });
+
+      // Keyboard shortcut
+      document.addEventListener('keydown', e => {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+          sampleBtn.click();
+        }
+      });
+    }
+
+    function parseFile(file) {
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function(results) {
+          try {
+            const processed = processData(results.data);
+            renderInfographic(processed);
+          } catch (err) {
+            alert('Error processing CSV: ' + err.message);
+          }
+        },
+        error: function(err) {
+          alert('Error reading file: ' + err.message);
+        }
+      });
+    }
+
+    // Start app
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
