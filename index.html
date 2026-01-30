@@ -46,53 +46,158 @@
     </p>
   </section>
 
+  <!-- Pizza Info Modal -->
+  <div id="pizza-info-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h2>🍕 Pizza Details</h2>
+      <p style="color: var(--text-secondary); margin-bottom: var(--space-lg);">Tell us about this pizza!</p>
+
+      <label for="pizza-place-input" style="display: block; margin-bottom: var(--space-xs); font-weight: 600;">Pizza Place Name</label>
+      <input type="text" id="pizza-place-input" placeholder="e.g., Joe's Pizza" style="
+        width: 100%;
+        padding: 12px;
+        border: 2px solid var(--bg-warm);
+        border-radius: var(--radius-md);
+        font-size: 1em;
+        margin-bottom: var(--space-lg);
+        box-sizing: border-box;
+      ">
+
+      <label for="pizza-date-input" style="display: block; margin-bottom: var(--space-xs); font-weight: 600;">Date</label>
+      <input type="date" id="pizza-date-input" style="
+        width: 100%;
+        padding: 12px;
+        border: 2px solid var(--bg-warm);
+        border-radius: var(--radius-md);
+        font-size: 1em;
+        margin-bottom: var(--space-xl);
+        box-sizing: border-box;
+      ">
+
+      <button id="pizza-info-submit" style="
+        width: 100%;
+        padding: 14px;
+        background: var(--pizza-red);
+        color: white;
+        border: none;
+        border-radius: var(--radius-md);
+        font-size: 1.1em;
+        font-weight: 600;
+        cursor: pointer;
+      ">Generate Infographic</button>
+    </div>
+  </div>
+
+  <style>
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: white;
+      padding: var(--space-2xl);
+      border-radius: var(--radius-xl);
+      max-width: 400px;
+      width: 90%;
+      box-shadow: var(--shadow-xl);
+    }
+    .modal-content h2 {
+      margin-bottom: var(--space-sm);
+    }
+  </style>
+
   <!-- Infographic Section (hidden by default) -->
   <main id="infographic" class="infographic" aria-label="Pizza Survey Results">
     <!-- Content will be dynamically generated -->
   </main>
 
-  <!-- Reset Button (shown when viewing infographic) -->
-  <button
-    id="reset-btn"
-    onclick="resetToUpload()"
-    style="
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      padding: 12px 20px;
-      background: var(--pizza-red);
-      color: white;
-      border: none;
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      font-family: var(--font-primary);
-      font-weight: var(--font-semibold);
-      box-shadow: var(--shadow-lg);
-      z-index: 100;
-      display: none;
-    "
-    aria-label="Upload new data"
-  >
-    📤 New Data
-  </button>
+  <!-- Fixed Buttons (shown when viewing infographic) -->
+  <div id="fixed-buttons" style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 100;
+  ">
+    <button
+      id="share-btn-fixed"
+      onclick="copyShareLink()"
+      style="
+        padding: 12px 20px;
+        background: var(--pesto-green, #27AE60);
+        color: white;
+        border: none;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        font-family: var(--font-primary);
+        font-weight: var(--font-semibold);
+        box-shadow: var(--shadow-lg);
+      "
+      aria-label="Copy share link"
+    >
+      🔗 Share Link
+    </button>
+    <button
+      id="reset-btn"
+      onclick="resetToUpload()"
+      style="
+        padding: 12px 20px;
+        background: var(--pizza-red);
+        color: white;
+        border: none;
+        border-radius: var(--radius-md);
+        cursor: pointer;
+        font-family: var(--font-primary);
+        font-weight: var(--font-semibold);
+        box-shadow: var(--shadow-lg);
+      "
+      aria-label="Upload new data"
+    >
+      📤 New Data
+    </button>
+  </div>
 
   <!-- Scripts -->
   <script type="module" src="./js/main.js"></script>
 
-  <!-- Show reset button when infographic is visible -->
+  <!-- Show buttons when infographic is visible -->
   <script>
-    const observer = new MutationObserver((mutations) => {
+    function updateButtonVisibility() {
       const infographic = document.getElementById('infographic');
-      const resetBtn = document.getElementById('reset-btn');
-      if (infographic && resetBtn) {
-        resetBtn.style.display = infographic.classList.contains('visible') ? 'block' : 'none';
+      const fixedButtons = document.getElementById('fixed-buttons');
+      if (infographic && fixedButtons) {
+        fixedButtons.style.display = infographic.classList.contains('visible') ? 'flex' : 'none';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const infographic = document.getElementById('infographic');
+
+      if (infographic) {
+        // Check initial state
+        updateButtonVisibility();
+
+        // Watch for changes
+        const observer = new MutationObserver(updateButtonVisibility);
+        observer.observe(infographic, {
+          attributes: true,
+          attributeFilter: ['class']
+        });
       }
     });
 
-    observer.observe(document.getElementById('infographic'), {
-      attributes: true,
-      attributeFilter: ['class']
-    });
+    // Also expose globally so main.js can call it
+    window.updateButtonVisibility = updateButtonVisibility;
   </script>
 
   <!-- Accessibility: Skip to main content link -->

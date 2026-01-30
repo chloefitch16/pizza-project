@@ -12,10 +12,10 @@ import anime from 'animejs';
  */
 export function createColdPizzaChart(container, coldPizzaData) {
   const { items, total } = coldPizzaData;
-  const maxCount = Math.max(...items.map(i => i.count));
 
   const barsHTML = items.map((item, index) => {
-    const width = maxCount > 0 ? (item.count / maxCount) * 100 : 0;
+    // Use actual percentage so bars are proportional to real data
+    const width = item.percentage;
     const emoji = getEmoji(item.label);
 
     return `

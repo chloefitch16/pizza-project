@@ -780,6 +780,37 @@ p {
   opacity: 0.8;
 }
 
+/* Share Button */
+.share-section {
+  display: flex;
+  justify-content: center;
+  margin: var(--space-2xl) 0;
+}
+
+.share-btn {
+  background: var(--pizza-red);
+  color: var(--text-inverse);
+  border: none;
+  padding: var(--space-md) var(--space-xl);
+  font-size: var(--text-lg);
+  font-weight: var(--font-semibold);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.share-btn:hover {
+  background: var(--pizza-red-dark);
+  transform: scale(1.05);
+}
+
+.share-btn:active {
+  transform: scale(0.98);
+}
+
 /* Loading State */
 .loading {
   display: flex;
