@@ -1,82 +1,113 @@
-/* Pizza Survey Infographic - Design System */
+/* Pizza Survey Infographic - Trattoria Design System */
+/* Inspired by Italian pizzerias, warmth, and gathering */
 
 :root {
-  /* Primary Colors */
-  --pizza-red: #C0392B;
-  --pizza-red-light: #E74C3C;
-  --pizza-red-dark: #922B21;
+  /* ═══════════════════════════════════════════════════════
+     SIGNATURE PALETTE - Rooted in the pizza domain
+     ═══════════════════════════════════════════════════════ */
 
-  /* Secondary Colors */
-  --cheese-yellow: #F4D03F;
-  --cheese-yellow-light: #F7DC6F;
-  --cheese-yellow-dark: #D4AC0D;
+  /* Tomato - Primary action color */
+  --tomato: #C84B31;
+  --tomato-light: #E76F51;
+  --tomato-dark: #A63C26;
+  --tomato-glow: rgba(200, 75, 49, 0.15);
 
-  /* Accent Colors */
-  --pesto-green: #27AE60;
-  --pesto-green-light: #2ECC71;
-  --pesto-green-dark: #1E8449;
+  /* Mozzarella - Cards and surfaces */
+  --mozzarella: #FFFBF5;
+  --mozzarella-warm: #FFF5E9;
 
-  /* Pizza Type Colors */
-  --cheese-color: #F4D03F;
-  --pepperoni-color: #C0392B;
-  --chicken-pesto-color: #27AE60;
-  --veggie-color: #8E44AD;
-  --meat-lovers-color: #A04000;
-  --hawaiian-color: #F39C12;
+  /* Crust - Warm golden tones */
+  --crust: #D4A574;
+  --crust-light: #E8C9A0;
+  --crust-dark: #B8956A;
+  --crust-glow: rgba(212, 165, 116, 0.2);
 
-  /* Background Colors */
-  --bg-cream: #FDF6E3;
-  --bg-warm: #FAF0DC;
-  --bg-card: #FFFFFF;
-  --bg-overlay: rgba(0, 0, 0, 0.5);
+  /* Basil - Success/positive */
+  --basil: #5B8C5A;
+  --basil-light: #7AAD79;
+  --basil-dark: #4A7249;
 
-  /* Text Colors */
-  --text-primary: #2C3E50;
-  --text-secondary: #7F8C8D;
-  --text-light: #BDC3C7;
-  --text-inverse: #FFFFFF;
+  /* Olive Oil - Highlights and warmth */
+  --olive: #E9B44C;
+  --olive-light: #F2CA6D;
+  --olive-dark: #D4A03A;
 
-  /* Emoji Card Colors */
-  --joy-color: #F1C40F;
-  --shame-color: #9B59B6;
-  --regret-color: #E74C3C;
-  --satisfied-color: #2ECC71;
+  /* Parchment - Backgrounds */
+  --parchment: #FAF4EB;
+  --parchment-dark: #F0E6D8;
+  --parchment-warm: #FDF8F0;
 
-  /* Tier Colors */
-  --tier-gold: #FFD700;
-  --tier-silver: #C0C0C0;
-  --tier-bronze: #CD7F32;
+  /* Charcoal - Text and contrast */
+  --charcoal: #2D3436;
+  --charcoal-light: #636E72;
+  --charcoal-muted: #95A5A6;
 
-  /* Temperature Colors */
-  --temp-hot: #E74C3C;
-  --temp-warm: #F39C12;
-  --temp-cold: #3498DB;
+  /* Pizza type colors - derived from ingredients */
+  --pizza-cheese: #E9B44C;
+  --pizza-pepperoni: #C84B31;
+  --pizza-pesto: #5B8C5A;
+  --pizza-veggie: #8E6B99;
+  --pizza-meat: #8B5A2B;
+  --pizza-hawaiian: #E8A040;
 
-  /* Shadows */
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.12);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.15);
-  --shadow-xl: 0 12px 48px rgba(0, 0, 0, 0.2);
+  /* ═══════════════════════════════════════════════════════
+     SURFACE SYSTEM - Subtle layering, not harsh jumps
+     ═══════════════════════════════════════════════════════ */
 
-  /* Border Radius */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
-  --radius-round: 50%;
+  --surface-page: var(--parchment);
+  --surface-raised: var(--mozzarella);
+  --surface-overlay: var(--mozzarella-warm);
+  --surface-highlight: var(--parchment-warm);
 
-  /* Spacing */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
-  --space-2xl: 48px;
-  --space-3xl: 64px;
+  /* ═══════════════════════════════════════════════════════
+     SHADOWS - Warm oven glow, not harsh tech shadows
+     ═══════════════════════════════════════════════════════ */
 
-  /* Typography */
-  --font-primary: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Fredoka One', 'Nunito', sans-serif;
+  --shadow-soft: 0 2px 8px rgba(45, 52, 54, 0.04);
+  --shadow-medium: 0 4px 16px rgba(45, 52, 54, 0.06);
+  --shadow-lifted: 0 8px 24px rgba(45, 52, 54, 0.08);
+  --shadow-glow: 0 4px 20px var(--crust-glow);
+  --shadow-action: 0 6px 20px var(--tomato-glow);
+
+  /* ═══════════════════════════════════════════════════════
+     BORDERS - Whisper-quiet definition
+     ═══════════════════════════════════════════════════════ */
+
+  --border-subtle: 1px solid rgba(212, 165, 116, 0.15);
+  --border-visible: 1px solid rgba(212, 165, 116, 0.25);
+  --border-accent: 2px solid var(--crust-light);
+
+  /* ═══════════════════════════════════════════════════════
+     RADII - Organic, dough-like curves
+     ═══════════════════════════════════════════════════════ */
+
+  --radius-soft: 8px;
+  --radius-dough: 16px;
+  --radius-pillow: 24px;
+  --radius-round: 9999px;
+
+  /* ═══════════════════════════════════════════════════════
+     SPACING - 8px base unit, consistent rhythm
+     ═══════════════════════════════════════════════════════ */
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* ═══════════════════════════════════════════════════════
+     TYPOGRAPHY - Warm and inviting
+     ═══════════════════════════════════════════════════════ */
+
+  --font-body: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Fredoka One', var(--font-body);
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;
@@ -84,51 +115,48 @@
   --text-lg: 1.125rem;
   --text-xl: 1.25rem;
   --text-2xl: 1.5rem;
-  --text-3xl: 2rem;
-  --text-4xl: 2.5rem;
-  --text-5xl: 3.5rem;
-  --text-6xl: 4.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
+  --text-5xl: 3rem;
+  --text-hero: 4rem;
 
-  /* Line Heights */
-  --leading-tight: 1.1;
-  --leading-snug: 1.25;
+  --leading-tight: 1.15;
+  --leading-snug: 1.3;
   --leading-normal: 1.5;
-  --leading-relaxed: 1.75;
+  --leading-relaxed: 1.7;
 
-  /* Font Weights */
-  --font-normal: 400;
-  --font-medium: 500;
-  --font-semibold: 600;
-  --font-bold: 700;
-  --font-extrabold: 800;
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-heavy: 800;
 
-  /* Transitions */
-  --transition-fast: 150ms ease;
-  --transition-normal: 300ms ease;
-  --transition-slow: 500ms ease;
-  --transition-bounce: 500ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  /* ═══════════════════════════════════════════════════════
+     MOTION - Smooth and appetizing
+     ═══════════════════════════════════════════════════════ */
 
-  /* Z-Index Scale */
+  --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+
+  /* ═══════════════════════════════════════════════════════
+     Z-INDEX - Predictable layers
+     ═══════════════════════════════════════════════════════ */
+
   --z-base: 0;
+  --z-raised: 10;
   --z-dropdown: 100;
   --z-sticky: 200;
   --z-modal: 300;
   --z-tooltip: 400;
 
-  /* Container Widths */
-  --container-sm: 640px;
-  --container-md: 768px;
-  --container-lg: 1024px;
-  --container-xl: 1280px;
-}
+  /* ═══════════════════════════════════════════════════════
+     LAYOUT
+     ═══════════════════════════════════════════════════════ */
 
-/* Dark Mode Support (optional) */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-cream: #1a1a2e;
-    --bg-warm: #16213e;
-    --bg-card: #0f3460;
-    --text-primary: #EAEAEA;
-    --text-secondary: #B0B0B0;
-  }
+  --container-narrow: 640px;
+  --container-base: 900px;
+  --container-wide: 1200px;
 }

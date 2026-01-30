@@ -411,10 +411,10 @@ function showInfographic(data) {
   infographicSection.innerHTML = `
     <div class="container">
       <!-- Header Banner -->
-      <div style="background: linear-gradient(135deg, #C0392B, #E74C3C); color: white; padding: 24px 32px; border-radius: 16px; margin-bottom: 32px; text-align: center;">
-        <h1 style="margin: 0 0 8px 0; font-size: 2em;">🍕 ${data.pizzaInfo?.place || 'Pizza Survey'}</h1>
-        <p style="margin: 0; opacity: 0.9; font-size: 1.1em;">${formatDisplayDate(data.pizzaInfo?.date)}</p>
-        <button onclick="copyShareLink()" style="background: white; color: #C0392B; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 1em; margin-top: 16px;">
+      <div style="background: linear-gradient(135deg, #C84B31, #E76F51); color: white; padding: 32px 40px; border-radius: 24px; margin-bottom: 40px; text-align: center; box-shadow: 0 8px 32px rgba(200, 75, 49, 0.2);">
+        <h1 style="margin: 0 0 8px 0; font-size: 2.25em; font-family: 'Fredoka One', sans-serif;">🍕 ${data.pizzaInfo?.place || 'Pizza Survey'}</h1>
+        <p style="margin: 0; opacity: 0.9; font-size: 1.15em; font-weight: 500;">${formatDisplayDate(data.pizzaInfo?.date)}</p>
+        <button onclick="copyShareLink()" style="background: #FFFBF5; color: #C84B31; border: none; padding: 12px 28px; border-radius: 9999px; font-weight: 600; cursor: pointer; font-size: 1em; margin-top: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); transition: transform 0.2s ease;">
           🔗 Copy Share Link
         </button>
       </div>
